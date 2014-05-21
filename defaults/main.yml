@@ -1,0 +1,27 @@
+---
+
+iptables_packages:
+  - ipset
+  - iptables
+  - iptables-ipv6
+
+iptables_default_policy: ACCEPT
+
+iptables_public_interface: eth0
+
+iptables_accepted_intefaces:
+  - lo
+
+iptables_syn_protection: true
+
+iptables_accept_icmp: true
+
+iptables_banned_ips:
+  - 123.123.123.123
+
+iptables_input_ports:
+  - {n: 22, p: tcp, a: ACCEPT}  # allow ssh input connections
+
+iptables_output_ports:
+  - {n: 123, p: udp, a: ACCEPT} # allow ntp requests
+  - {n: 53, p: udp, a: ACCEPT}

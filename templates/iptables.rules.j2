@@ -1,0 +1,36 @@
+*filter
+:INPUT {{ iptables_default_policy }} [0:0]
+{% if iptables_syn_protection %}
+-A INPUT -i {{ iptables_public_interface }} -p tcp ! --syn -m state --state NEW -j DROP
+{% endif %}
+{% for iface in iptables_accepted_intefaces %}
+-A INPUT -i {{ iface }} -j ACCEPT
+{% endfor %}
+{% if iptables_accept_icmp %}
+-A INPUT -i {{ iptables_public_interface }} -p icmp --icmp-type 8 -s 0/0 -m state --state NEW,ESTABLISHED,RELATED -m limit --limit 30/sec -j ACCEPT
+-A INPUT -i {{ iptables_public_interface }} -p icmp --icmp-type 0 -d 0/0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+{% endif %}
+# Incoming accepted conections
+{% for port in iptables_input_ports %}
+-A INPUT -i {{ iptables_public_interface }} -p {{ port.p }} --dport {{ port.n }} -m state --state NEW,ESTABLISHED,RELATED -j {{ port.a }}
+{% endfor %}
+# Output established connections
+{% for port in iptables_output_ports %}
+-A INPUT -i {{ iptables_public_interface }} -p {{ port.p }} --sport {{ port.n }} -m state --state ESTABLISHED,RELATED -j {{ port.a }} 
+{% endfor %}:FORWARD {{ iptables_default_policy }} [0:0]
+:OUTPUT {{ iptables_default_policy }} [0:0]
+{% for iface in iptables_accepted_intefaces %}
+-A OUTPUT -o {{ iface }} -j ACCEPT
+{% endfor %}
+{% if iptables_accept_icmp %}
+-A OUTPUT -o {{ iptables_public_interface }} -p icmp --icmp-type 0 -d 0/0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -o {{ iptables_public_interface }} -p icmp --icmp-type 8 -s 0/0 -m state --state NEW,ESTABLISHED,RELATED -m limit --limit 30/sec -j ACCEPT
+{% endif %}
+# Outgoing accepted connections
+{% for port in iptables_output_ports %}
+-A OUTPUT -o {{ iptables_public_interface }} -p {{ port.p }} --dport {{ port.n }} -m state --state NEW,ESTABLISHED,RELATED -j {{ port.a }}
+{% endfor %}
+# Outgoing established connections
+{% for port in iptables_input_ports %}
+-A OUTPUT -o {{ iptables_public_interface }} -p {{ port.p }} --sport {{ port.n }} -m state --state ESTABLISHED,RELATED -j {{ port.a }}
+{% endfor %}COMMIT

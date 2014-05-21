@@ -1,0 +1,7 @@
+#!/bin/bash
+ipset destroy
+ipset create deny_ips hash:ip
+{% for ip in iptables_banned_ips%}
+ipset add deny_ips {{ ip }}
+{% endfor %}
+iptables -I INPUT 1 -i {{ iptables_public_interface }} -m set --match-set deny_ips src -j DROP

@@ -1,0 +1,29 @@
+- name: install Iptables packages                                                               
+  yum: name={{ item }} state=present
+  with_items: iptables_packages
+  tags:
+    - install
+    - iptables
+
+- name: Copy iptables init script
+  copy: src=iptables.init dest=/etc/init.d/iptables owner=root group=root mode=755
+  tags:
+    - install
+    - iptables
+
+- name: Copy iptables rules file
+  template: src=iptables.rules.j2 dest=/etc/sysconfig/iptables owner=root group=root mode=0644 backup=yes
+  notify:
+   - restart iptables
+  tags:
+   - configure
+   - iptables
+
+- name: Copy ipset rules file
+  template: src=ipset.rules.j2 dest=/etc/sysconfig/ipset owner=root group=root mode=0744 backup=yes
+  notify:
+   - restart iptables
+  tags:
+   - configure
+   - iptables
+
