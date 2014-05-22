@@ -14,16 +14,22 @@
 - name: Copy iptables rules file
   template: src=iptables.rules.j2 dest=/etc/sysconfig/iptables owner=root group=root mode=0644 backup=yes
   notify:
-   - restart iptables
+    - restart iptables
   tags:
-   - configure
-   - iptables
+    - configure
+    - iptables
 
 - name: Copy ipset rules file
   template: src=ipset.rules.j2 dest=/etc/sysconfig/ipset owner=root group=root mode=0744 backup=yes
   notify:
-   - restart iptables
+    - restart iptables
   tags:
-   - configure
-   - iptables
+    - configure
+    - iptables
+
+- name: Enable iptables service
+  service: name=iptables enabled=yes state=started
+  tags:
+    - configure
+    - iptables
 

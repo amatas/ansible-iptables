@@ -1,5 +1,5 @@
 *filter
-:INPUT {{ iptables_default_policy }} [0:0]
+:INPUT {{ iptables_default_input_policy }} [0:0]
 {% if iptables_syn_protection %}
 -A INPUT -i {{ iptables_public_interface }} -p tcp ! --syn -m state --state NEW -j DROP
 {% endif %}
@@ -17,8 +17,8 @@
 # Output established connections
 {% for port in iptables_output_ports %}
 -A INPUT -i {{ iptables_public_interface }} -p {{ port.p }} --sport {{ port.n }} -m state --state ESTABLISHED,RELATED -j {{ port.a }} 
-{% endfor %}:FORWARD {{ iptables_default_policy }} [0:0]
-:OUTPUT {{ iptables_default_policy }} [0:0]
+{% endfor %}:FORWARD {{ iptables_default_forward_policy }} [0:0]
+:OUTPUT {{ iptables_default_output_policy }} [0:0]
 {% for iface in iptables_accepted_intefaces %}
 -A OUTPUT -o {{ iface }} -j ACCEPT
 {% endfor %}
