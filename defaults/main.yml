@@ -5,6 +5,8 @@ iptables_packages:
   - iptables
   - iptables-ipv6
 
+iptables_modules: ""
+
 iptables_default_input_policy: DROP
 iptables_default_forward_policy: ACCEPT
 iptables_default_output_policy: ACCEPT

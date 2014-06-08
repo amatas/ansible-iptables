@@ -11,6 +11,12 @@
     - install
     - iptables
 
+- name: Copy iptables config file
+  template: src=iptables-config.j2 dest=/etc/sysconfig/iptables-config owner=root group=root mode=0644
+  tags:
+    - install
+    - iptables
+
 - name: Copy iptables rules file
   template: src=iptables.rules.j2 dest=/etc/sysconfig/iptables owner=root group=root mode=0644 backup=yes
   notify:
