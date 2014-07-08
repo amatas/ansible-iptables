@@ -3,6 +3,7 @@
 {% if iptables_syn_protection %}
 -A INPUT -i {{ iptables_public_interface }} -p tcp ! --syn -m state --state NEW -j DROP
 {% endif %}
+-A INPUT -i lo -j ACCEPT
 {% for iface in iptables_accepted_intefaces %}
 -A INPUT -i {{ iface }} -j ACCEPT
 {% endfor %}

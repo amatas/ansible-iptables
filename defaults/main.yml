@@ -13,8 +13,7 @@ iptables_default_output_policy: ACCEPT
 
 iptables_public_interface: eth0
 
-iptables_accepted_intefaces:
-  - lo
+iptables_accepted_intefaces: []
 
 iptables_syn_protection: true
 
